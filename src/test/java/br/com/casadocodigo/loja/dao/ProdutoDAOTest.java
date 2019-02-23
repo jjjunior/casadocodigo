@@ -1,6 +1,8 @@
 package br.com.casadocodigo.loja.dao;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.junit.Assert;
@@ -40,4 +42,27 @@ public class ProdutoDAOTest {
 	    BigDecimal valor = produtoDao.somaPrecosPorTipo(TipoPreco.EBOOK);
 	    Assert.assertEquals(new BigDecimal(40).setScale(2), valor);
 	}
+
+	@Test
+	@Transactional
+	public void deveRetornarProdutosPorData() {
+
+        Calendar dataLivro1 = new GregorianCalendar();
+        dataLivro1.set(2017,10,01);
+
+        Calendar dataLivro2 = new GregorianCalendar();
+        dataLivro1.set(2017,11,01);
+
+        List<Produto> livrosImpressos = ProdutoBuilder.newProduto(TipoPreco.IMPRESSO, BigDecimal.TEN,dataLivro1).more(3).buildAll();
+        List<Produto> livrosEbook = ProdutoBuilder.newProduto(TipoPreco.EBOOK, BigDecimal.TEN,dataLivro2).more(3).buildAll();
+
+        livrosImpressos.stream().forEach(produtoDao::gravar);
+        livrosEbook.stream().forEach(produtoDao::gravar);
+
+        List<Produto> livrosImpressosConsulta = produtoDao.listar(dataLivro1);
+
+        Assert.assertEquals(livrosImpressosConsulta.size(), 4);
+	}
+
+
 }

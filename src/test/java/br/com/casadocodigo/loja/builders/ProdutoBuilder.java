@@ -22,6 +22,13 @@ public class ProdutoBuilder {
         return new ProdutoBuilder(livro);
     }
 
+    public static ProdutoBuilder newProduto(TipoPreco tipoPreco, BigDecimal valor, Calendar dataLancamento) {
+        Produto livro = create("livro 1", tipoPreco, valor,dataLancamento);
+        livro.setDataLancamento(dataLancamento);
+        return new ProdutoBuilder(livro);
+    }
+
+
     public static ProdutoBuilder newProduto() {
         Produto livro = create("livro 1", TipoPreco.COMBO, BigDecimal.TEN);
         return new ProdutoBuilder(livro);
@@ -40,11 +47,24 @@ public class ProdutoBuilder {
         return livro;
     }
 
+    private static Produto create(String nomeLivro, TipoPreco tipoPreco, BigDecimal valor, Calendar dataLancamento) {
+        Produto livro = new Produto();
+        livro.setTitulo(nomeLivro);
+        livro.setDataLancamento(dataLancamento);
+        livro.setPaginas(150);
+        livro.setDescricao("Livro top sobre testes");
+        Preco preco = new Preco();
+        preco.setTipo(tipoPreco);
+        preco.setValor(valor);
+        livro.getPrecos().add(preco);
+        return livro;
+    }
+
     public ProdutoBuilder more(int number) {
         Produto base = produtos.get(0);
         Preco preco = base.getPrecos().get(0);
         for (int i = 0; i < number; i++) {
-            produtos.add(create("Book " + i, preco.getTipo(), preco.getValor()));
+            produtos.add(create("Book " + i, preco.getTipo(), preco.getValor(),base.getDataLancamento()));
         }
         return this;
     }
