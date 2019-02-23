@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import br.com.casadocodigo.loja.controllers.PedidoServicoController;
+import br.com.casadocodigo.loja.controllers.RelatorioProdutosController;
+import br.com.casadocodigo.loja.models.Pedido;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.guava.GuavaCacheManager;
@@ -42,7 +45,7 @@ import br.com.casadocodigo.loja.infra.FileSaver;
 import br.com.casadocodigo.loja.models.CarrinhoCompras;
 
 @EnableWebMvc
-@ComponentScan(basePackageClasses = { HomeController.class, ProdutoDAO.class, FileSaver.class, CarrinhoCompras.class })
+@ComponentScan(basePackageClasses = { HomeController.class, ProdutoDAO.class, FileSaver.class, CarrinhoCompras.class, RelatorioProdutosController.class,PedidoServicoController.class})
 @EnableCaching
 @EnableAspectJAutoProxy(proxyTargetClass = true) 
 public class AppWebConfiguration extends WebMvcConfigurerAdapter {
@@ -90,8 +93,7 @@ public class AppWebConfiguration extends WebMvcConfigurerAdapter {
 
 	@Bean
 	public CacheManager cacheManger() {
-		CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder().maximumSize(100).expireAfterAccess(5,
-				TimeUnit.MINUTES);
+		CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder().maximumSize(100).expireAfterAccess(5, TimeUnit.MINUTES);
 		GuavaCacheManager manager = new GuavaCacheManager();
 		manager.setCacheBuilder(builder);
 		return  manager; //new ConcurrentMapCacheManager();
