@@ -1,8 +1,5 @@
 package br.com.casadocodigo.loja.helper;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
@@ -10,7 +7,6 @@ import java.util.GregorianCalendar;
 
 public class DataHelper {
 
-    private static final Logger logger = LogManager.getLogger(DataHelper.class);
     private GregorianCalendar calendar;
     private SimpleDateFormat formatter;
     private boolean dataValida;

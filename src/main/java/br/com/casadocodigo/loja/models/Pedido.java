@@ -17,7 +17,7 @@ public class Pedido implements Serializable {
     private ArrayList<Produto> produtos = new ArrayList<>();
 
 
-    public Pedido(Integer id, BigDecimal valor, Calendar data,Produto produto) {
+    public Pedido(Integer id, BigDecimal valor, Calendar data, Produto produto) {
         this.id = id;
         this.valor = valor;
         this.data = data;

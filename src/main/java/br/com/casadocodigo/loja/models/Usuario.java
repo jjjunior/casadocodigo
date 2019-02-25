@@ -1,125 +1,125 @@
 package br.com.casadocodigo.loja.models;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.*;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 @Entity
-public class Usuario implements UserDetails,Serializable {
+public class Usuario implements UserDetails, Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	private String email;
-	private String nome;
-	private String senha;
+    @Id
+    private String email;
+    private String nome;
+    private String senha;
 
-	@Transient
-	private String senhaRepetida;
+    @Transient
+    private String senhaRepetida;
 
-	public Usuario(){}
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinTable(name = "Usuario_Role", joinColumns = @JoinColumn(name = "email"), inverseJoinColumns = @JoinColumn(name = "role_nome"))
+    private List<Role> roles = new ArrayList<>();
 
-	public Usuario(String email) {
-		this.email = email;
-	}
+    public Usuario() {
+    }
 
-	public Usuario(String email, String nome, String senha, List<Role> roles) {
-		this.email = email;
-		this.nome = nome;
-		this.senha = senha;
-		this.roles = roles;
-	}
+    public Usuario(String email) {
+        this.email = email;
+    }
 
-	@ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE } , fetch = FetchType.EAGER)
-	@JoinTable(name = "Usuario_Role", joinColumns = @JoinColumn(name = "email"), inverseJoinColumns = @JoinColumn(name = "role_nome"))
-	private List<Role> roles = new ArrayList<>();
+    public Usuario(String email, String nome, String senha) {
+        this.email = email;
+        this.nome = nome;
+        this.senha = senha;
+        this.roles = roles;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public String getSenha() {
-		return senha;
-	}
+    public String getSenha() {
+        return senha;
+    }
 
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
 
-	public String getNome() {
-		return nome;
-	}
+    public String getNome() {
+        return nome;
+    }
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return this.roles;
-	}
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles;
+    }
 
-	@Override
-	public String getPassword() {
-		return this.senha;
-	}
+    @Override
+    public String getPassword() {
+        return this.senha;
+    }
 
-	@Override
-	public String getUsername() {
-		return this.email;
-	}
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
 
-	@Override
-	public boolean isAccountNonExpired() {
-		return true;
-	}
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
-	@Override
-	public boolean isAccountNonLocked() {
-		return true;
-	}
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return true;
-	}
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
-	public String getSenhaRepetida() {
-		return senhaRepetida;
-	}
+    public String getSenhaRepetida() {
+        return senhaRepetida;
+    }
 
-	public void setSenhaRepetida(String senhaRepetida) {
-		this.senhaRepetida = senhaRepetida;
-	}
+    public void setSenhaRepetida(String senhaRepetida) {
+        this.senhaRepetida = senhaRepetida;
+    }
 
-	@PrePersist
-	public void prePersist() {
-		this.senha = new BCryptPasswordEncoder().encode(this.senha);
-	}
+    @PrePersist
+    public void prePersist() {
+        this.senha = new BCryptPasswordEncoder().encode(this.senha);
+    }
 
-	public List<Role> getRoles() {
-		return roles;
-	}
+    public List<Role> getRoles() {
+        return roles;
+    }
 
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
-	}
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
 
 }

@@ -5,9 +5,9 @@ import java.util.List;
 
 public class ProdutoRelatorio {
 
+    List<Produto> produtos;
     private Calendar dataGeracao;
     private Integer quantidade;
-    List<Produto> produtos;
 
     public ProdutoRelatorio(Calendar dataGeracao, Integer quantidade, List<Produto> produtos) {
         this.dataGeracao = dataGeracao;

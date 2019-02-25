@@ -1,13 +1,12 @@
 package br.com.casadocodigo.loja.conf;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
+import br.com.casadocodigo.loja.controllers.HomeController;
 import br.com.casadocodigo.loja.controllers.PedidoServicoController;
 import br.com.casadocodigo.loja.controllers.RelatorioProdutosController;
-import br.com.casadocodigo.loja.models.Pedido;
+import br.com.casadocodigo.loja.dao.ProdutoDAO;
+import br.com.casadocodigo.loja.infra.FileSaver;
+import br.com.casadocodigo.loja.models.CarrinhoCompras;
+import com.google.common.cache.CacheBuilder;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.guava.GuavaCacheManager;
@@ -37,108 +36,106 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import com.google.common.cache.CacheBuilder;
-
-import br.com.casadocodigo.loja.controllers.HomeController;
-import br.com.casadocodigo.loja.dao.ProdutoDAO;
-import br.com.casadocodigo.loja.infra.FileSaver;
-import br.com.casadocodigo.loja.models.CarrinhoCompras;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 @EnableWebMvc
-@ComponentScan(basePackageClasses = { HomeController.class, ProdutoDAO.class, FileSaver.class, CarrinhoCompras.class, RelatorioProdutosController.class,PedidoServicoController.class})
+@ComponentScan(basePackageClasses = {HomeController.class, ProdutoDAO.class, FileSaver.class, CarrinhoCompras.class, RelatorioProdutosController.class, PedidoServicoController.class})
 @EnableCaching
-@EnableAspectJAutoProxy(proxyTargetClass = true) 
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class AppWebConfiguration extends WebMvcConfigurerAdapter {
 
-	@Bean
-	public InternalResourceViewResolver internalResourceViewResolver() {
-		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-		resolver.setPrefix("/WEB-INF/views/");
-		resolver.setSuffix(".jsp");
+    @Bean
+    public InternalResourceViewResolver internalResourceViewResolver() {
+        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+        resolver.setPrefix("/WEB-INF/views/");
+        resolver.setSuffix(".jsp");
 
-		// resolver.setExposeContextBeansAsAttributes(true);
-		resolver.setExposedContextBeanNames("carrinhoCompras");
+        // resolver.setExposeContextBeansAsAttributes(true);
+        resolver.setExposedContextBeanNames("carrinhoCompras");
 
-		return resolver;
-	}
+        return resolver;
+    }
 
-	@Bean
-	public MessageSource messageSource() {
-		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-		messageSource.setBasename("/WEB-INF/messages");
-		messageSource.setDefaultEncoding("UTF-8");
-		messageSource.setCacheSeconds(1);
-		return messageSource;
-	}
+    @Bean
+    public MessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasename("/WEB-INF/messages");
+        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setCacheSeconds(1);
+        return messageSource;
+    }
 
-	@Bean
-	public FormattingConversionService mvcConversionService() {
-		DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
-		DateFormatterRegistrar registrar = new DateFormatterRegistrar();
-		registrar.setFormatter(new DateFormatter("dd/MM/yyyy"));
-		registrar.registerFormatters(conversionService);
+    @Bean
+    public FormattingConversionService mvcConversionService() {
+        DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
+        DateFormatterRegistrar registrar = new DateFormatterRegistrar();
+        registrar.setFormatter(new DateFormatter("dd/MM/yyyy"));
+        registrar.registerFormatters(conversionService);
 
-		return conversionService;
-	}
+        return conversionService;
+    }
 
-	@Bean
-	public MultipartResolver multipartResolver() {
-		return new StandardServletMultipartResolver();
-	}
+    @Bean
+    public MultipartResolver multipartResolver() {
+        return new StandardServletMultipartResolver();
+    }
 
-	@Bean
-	public RestTemplate restTemplate() {
-		return new RestTemplate();
-	}
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 
-	@Bean
-	public CacheManager cacheManger() {
-		CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder().maximumSize(100).expireAfterAccess(5, TimeUnit.MINUTES);
-		GuavaCacheManager manager = new GuavaCacheManager();
-		manager.setCacheBuilder(builder);
-		return  manager; //new ConcurrentMapCacheManager();
-	}
-	
-	@Bean
-	public ViewResolver contentNegotiationViewResolver(ContentNegotiationManager manager) {
-		List<ViewResolver> viewResolvers = new ArrayList<>();
-		viewResolvers.add(internalResourceViewResolver());
-		viewResolvers.add(new JsonViewResolver());
-		
-		ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
-		resolver.setViewResolvers(viewResolvers);
-		resolver.setContentNegotiationManager(manager);
-		return resolver;
-	}
+    @Bean
+    public CacheManager cacheManger() {
+        CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder().maximumSize(100).expireAfterAccess(5, TimeUnit.MINUTES);
+        GuavaCacheManager manager = new GuavaCacheManager();
+        manager.setCacheBuilder(builder);
+        return manager; //new ConcurrentMapCacheManager();
+    }
 
-	@Override
-	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-		configurer.enable();
-	}
-	
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new LocaleChangeInterceptor());
-	}
-	
-	@Bean
-	public LocaleResolver localeResolver(){
-	    return new CookieLocaleResolver();
-	}
-	
-	@Bean
-	public MailSender mailSender() {
-		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-		mailSender.setHost("seu servidor smtp");//por exemplo smtp.gmail.com
-		mailSender.setUsername("seu email");
-		mailSender.setPassword("sua senha");
-		mailSender.setPort(587);
-		
-		Properties mailProperties = new Properties();
-		mailProperties.setProperty("mail.smtp.auth", "true");
-		mailProperties.setProperty("mail.smtp.starttls.enable", "true");
-		mailSender.setJavaMailProperties(mailProperties);
-		
-		return mailSender;
-	}
+    @Bean
+    public ViewResolver contentNegotiationViewResolver(ContentNegotiationManager manager) {
+        List<ViewResolver> viewResolvers = new ArrayList<>();
+        viewResolvers.add(internalResourceViewResolver());
+        viewResolvers.add(new JsonViewResolver());
+
+        ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
+        resolver.setViewResolvers(viewResolvers);
+        resolver.setContentNegotiationManager(manager);
+        return resolver;
+    }
+
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+        configurer.enable();
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LocaleChangeInterceptor());
+    }
+
+    @Bean
+    public LocaleResolver localeResolver() {
+        return new CookieLocaleResolver();
+    }
+
+    @Bean
+    public MailSender mailSender() {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost("seu servidor smtp");//por exemplo smtp.gmail.com
+        mailSender.setUsername("seu email");
+        mailSender.setPassword("sua senha");
+        mailSender.setPort(587);
+
+        Properties mailProperties = new Properties();
+        mailProperties.setProperty("mail.smtp.auth", "true");
+        mailProperties.setProperty("mail.smtp.starttls.enable", "true");
+        mailSender.setJavaMailProperties(mailProperties);
+
+        return mailSender;
+    }
 }

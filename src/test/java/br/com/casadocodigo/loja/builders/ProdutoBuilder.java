@@ -1,13 +1,13 @@
 package br.com.casadocodigo.loja.builders;
 
+import br.com.casadocodigo.loja.models.Preco;
+import br.com.casadocodigo.loja.models.Produto;
+import br.com.casadocodigo.loja.models.TipoPreco;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
-import br.com.casadocodigo.loja.models.Preco;
-import br.com.casadocodigo.loja.models.Produto;
-import br.com.casadocodigo.loja.models.TipoPreco;
 
 public class ProdutoBuilder {
 
@@ -23,7 +23,7 @@ public class ProdutoBuilder {
     }
 
     public static ProdutoBuilder newProduto(TipoPreco tipoPreco, BigDecimal valor, Calendar dataLancamento) {
-        Produto livro = create("livro 1", tipoPreco, valor,dataLancamento);
+        Produto livro = create("livro 1", tipoPreco, valor, dataLancamento);
         livro.setDataLancamento(dataLancamento);
         return new ProdutoBuilder(livro);
     }
@@ -61,10 +61,10 @@ public class ProdutoBuilder {
     }
 
     public ProdutoBuilder more(int number) {
-        Produto base = produtos.get(0);
+        Produto base = produtos.get(produtos.size() - 1);
         Preco preco = base.getPrecos().get(0);
         for (int i = 0; i < number; i++) {
-            produtos.add(create("Book " + i, preco.getTipo(), preco.getValor(),base.getDataLancamento()));
+            produtos.add(create("Book " + i, preco.getTipo(), preco.getValor(), base.getDataLancamento()));
         }
         return this;
     }

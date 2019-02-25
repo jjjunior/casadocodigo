@@ -2,11 +2,10 @@ package br.com.casadocodigo.loja.controllers;
 
 import br.com.casadocodigo.loja.dao.RoleDAO;
 import br.com.casadocodigo.loja.dao.UsuarioDAO;
-import br.com.casadocodigo.loja.models.*;
-import br.com.casadocodigo.loja.validation.ProdutoValidation;
+import br.com.casadocodigo.loja.models.Role;
+import br.com.casadocodigo.loja.models.Usuario;
 import br.com.casadocodigo.loja.validation.UsuarioValidation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
@@ -15,20 +14,16 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Controller
 @RequestMapping("/usuarios")
-@Scope(value=WebApplicationContext.SCOPE_REQUEST)
+@Scope(value = WebApplicationContext.SCOPE_REQUEST)
 public class UsuarioController {
 
     @Autowired
@@ -43,8 +38,8 @@ public class UsuarioController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView listarUsuario() {
-        List<Usuario> usuarios = usuarioDAO.listarUsuario();
+    public ModelAndView listarUsuarios() {
+        List<Usuario> usuarios = usuarioDAO.listarUsuarios();
         ModelAndView modelAndView = new ModelAndView("usuarios/usuario");
         modelAndView.addObject("usuarios", usuarios);
         return modelAndView;
@@ -68,7 +63,7 @@ public class UsuarioController {
     }
 
     @RequestMapping(value = "/alterarRoles", method = RequestMethod.POST)
-    public ModelAndView alterarRoles(Usuario usuario,String email, RedirectAttributes redirectAttributes) {
+    public ModelAndView alterarRoles(Usuario usuario, String email, RedirectAttributes redirectAttributes) {
         Usuario usuarioAlterado = usuarioDAO.loadUserByUsername(email);
         usuarioAlterado.setRoles(usuario.getRoles());
         usuarioDAO.alterar(usuarioAlterado);
@@ -87,7 +82,7 @@ public class UsuarioController {
         try {
             Usuario usuario1 = usuarioDAO.loadUserByUsername(usuario.getEmail());
             return form(usuario, "Usuario: " + usuario1.getEmail() + " já existe em nosso cadastro");
-        }catch (UsernameNotFoundException e){
+        } catch (UsernameNotFoundException e) {
             usuarioDAO.gravar(usuario);
             redirectAttributes.addFlashAttribute("message", "Usuario cadastrado com sucesso!");
             return new ModelAndView("redirect:/usuarios");
