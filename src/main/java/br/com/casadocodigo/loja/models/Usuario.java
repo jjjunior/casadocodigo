@@ -9,6 +9,7 @@ import javax.persistence.*;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Entity
 public class Usuario implements UserDetails,Serializable {
@@ -25,10 +26,19 @@ public class Usuario implements UserDetails,Serializable {
 
 	public Usuario(){}
 
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "Usuario_Role",
-		joinColumns = @JoinColumn(name = "email"), 
-		inverseJoinColumns = @JoinColumn(name = "role_nome"))
+	public Usuario(String email) {
+		this.email = email;
+	}
+
+	public Usuario(String email, String nome, String senha, List<Role> roles) {
+		this.email = email;
+		this.nome = nome;
+		this.senha = senha;
+		this.roles = roles;
+	}
+
+	@ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE } , fetch = FetchType.EAGER)
+	@JoinTable(name = "Usuario_Role", joinColumns = @JoinColumn(name = "email"), inverseJoinColumns = @JoinColumn(name = "role_nome"))
 	private List<Role> roles = new ArrayList<>();
 
 	public String getEmail() {
@@ -55,13 +65,6 @@ public class Usuario implements UserDetails,Serializable {
 		this.nome = nome;
 	}
 
-	public List<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
-	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -105,4 +108,18 @@ public class Usuario implements UserDetails,Serializable {
 	public void setSenhaRepetida(String senhaRepetida) {
 		this.senhaRepetida = senhaRepetida;
 	}
+
+	@PrePersist
+	public void prePersist() {
+		this.senha = new BCryptPasswordEncoder().encode(this.senha);
+	}
+
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
+
 }

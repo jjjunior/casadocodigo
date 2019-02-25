@@ -23,6 +23,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.antMatchers("/produtos/detalhes/**").permitAll()
 			.antMatchers("/produtos/**").hasRole("ADMIN")
 			.antMatchers("/pedidos/**").hasRole("ADMIN")
+			.antMatchers("/usuarios/**").hasRole("ADMIN")
 			.antMatchers("/carrinho/**").permitAll()
 			.antMatchers("/pagamento/**").permitAll()	
 			.antMatchers("/").permitAll()
@@ -39,8 +40,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(usuarioDao)
-				.passwordEncoder(new BCryptPasswordEncoder());
+		auth.userDetailsService(usuarioDao).passwordEncoder(new BCryptPasswordEncoder());
 	}
 	
     // Forma recomendada de ignorar no filtro de segurança as requisições para recursos estáticos

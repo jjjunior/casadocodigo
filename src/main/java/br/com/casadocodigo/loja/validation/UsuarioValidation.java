@@ -20,10 +20,19 @@ public class UsuarioValidation implements Validator{
 		ValidationUtils.rejectIfEmpty(errors, "senha", "field.required");
 		ValidationUtils.rejectIfEmpty(errors, "senhaRepetida", "field.required");
 
-//		Produto produto = (Produto) target;
-//		if(produto.getPaginas() <= 0) {
-//			errors.rejectValue("paginas", "field.required");
-//		}
+		Usuario usuario = (Usuario) target;
+		if(usuario.getSenha().length() < 5) {
+			errors.rejectValue("senha", "field.usuario.senha.size");
+		}
+
+		if(usuario.getSenhaRepetida().length() < 5) {
+			errors.rejectValue("senhaRepetida", "field.usuario.senhaRepetida.size");
+		}
+
+		if(!usuario.getSenha().equals(usuario.getSenhaRepetida())){
+			errors.rejectValue("senhaRepetida", "field.usuario.senhaRepetida.repetida");
+
+		}
 	}
 	
 }

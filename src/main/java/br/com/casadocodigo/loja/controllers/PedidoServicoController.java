@@ -24,7 +24,7 @@ public class PedidoServicoController {
 
         List<Pedido> pedidos = restTemplate.getForObject(uri, List.class);
 
-        ModelAndView modelAndView = new ModelAndView("pedidos");
+        ModelAndView modelAndView = new ModelAndView("pedidos/pedido");
 
         modelAndView.addObject("pedidos", pedidos);
 

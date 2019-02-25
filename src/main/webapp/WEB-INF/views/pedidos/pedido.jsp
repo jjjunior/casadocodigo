@@ -34,8 +34,7 @@
                     <tr>
                         <td class="numeric-cell">${pedido.id }</td>
                         <td class="numeric-cell">${pedido.valor }</td>
-                        <%--<fmt:parseDate value="${pedido.data*1000}" pattern="yyyy-MM-dd HH:mm" var="pedidoData"/>--%>
-                        <td class="numeric-cell">${pedidoData}</td>
+                        <td class="numeric-cell">${pedido.data}</td>
                         <c:forEach items="${pedido.produtos}" var="produto" varStatus="status" >
                             <c:if test = "${status.first}">
                                 <c:set var="titulo" value='${titulo}${produto.titulo}' />

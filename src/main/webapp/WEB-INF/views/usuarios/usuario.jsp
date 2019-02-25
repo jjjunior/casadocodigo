@@ -12,6 +12,15 @@
 
     <jsp:body>
         <section class="container middle">
+
+            <c:if test="${not empty message }">
+                <h1 class="cdc-call">${message }</h1>
+            </c:if>
+
+            <h2>
+                <a href="${s:mvcUrl('UC#form').build() }">Novo Usuário</a>
+            </h2>
+
             <h2 id="cart-title">Lista de Usuários</h2>
             <table id="cart-table">
                 <colgroup>
@@ -23,8 +32,10 @@
                 </colgroup>
                 <thead>
                 <tr>
-                    <th width="50%">Nome</th>
-                    <th width="50%">Email</th>
+                    <th width="40%">Nome</th>
+                    <th width="30%">Email</th>
+                    <th width="34%">Roles</th>
+                    <th width="5%">Editar</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -32,6 +43,12 @@
                         <tr>
                             <td class="text">${usuario.nome}</td>
                             <td class="text">${usuario.email}</td>
+                            <td class="text">${usuario.roles}</td>
+                            <td class="remove-item">
+                                <form:form action="${s:mvcUrl('UC#listarRoles').arg(0,usuario.email).build()}" method="POST">
+                                    <input type="image" src="${contextPath }resources/imagens/adicionar.png" alt="Editar" title="Editar" />
+                                </form:form>
+                            </td>
                         </tr>
                     </c:forEach>
                 </tbody>
